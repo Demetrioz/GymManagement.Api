@@ -328,3 +328,8 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+GymManagement.Api/appsettings.Dev.json
+GymManagement.Api/appsettings.json
+GymManagement.Api/appsettings.Test.json
+GymManagement.Api/appsettings.Prod.json
+GymManagement.Migrations/
