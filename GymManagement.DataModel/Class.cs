@@ -14,6 +14,7 @@ namespace GymManagement.DataModel
         public DateTime? Start { get; set; }
         public DateTime? Stop { get; set; }
         public string Attendance { get; set; }
+        public int? MaxAttendance { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? Modified { get; set; }
         public bool? IsDeleted { get; set; }
