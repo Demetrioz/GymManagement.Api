@@ -11,7 +11,8 @@ namespace GymManagement.DataModel
         public int ClassScheduleId { get; set; }
         public int? ClassTypeId { get; set; }
         public string Day { get; set; }
-        public DateTime? Time { get; set; }
+        public DateTime? BeginTime { get; set; }
+        public DateTime? EndTime { get; set; }
         public int? Duration { get; set; }
         public DateTime? Created { get; set; }
         public DateTime? Modified { get; set; }
