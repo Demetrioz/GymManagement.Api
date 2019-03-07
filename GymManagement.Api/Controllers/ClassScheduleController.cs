@@ -30,6 +30,12 @@ namespace GymManagement.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Class>> CreateClassSchedule(ClassSchedule newClassSchedule)
         {
+            // TODO: take an array and add multiple schedules
+            
+            // Set default values
+            newClassSchedule.Created = DateTime.Now;
+            newClassSchedule.IsDeleted = false;
+
             _context.ClassSechedules.Add(newClassSchedule);
             await _context.SaveChangesAsync();
 
