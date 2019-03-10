@@ -28,7 +28,7 @@ namespace GymManagement.Api.Controllers
 
         // Post: /api/Class
         [HttpPost]
-        public async Task<ActionResult<Class>> CreateClassSchedule(ClassSchedule newClassSchedule)
+        public async Task<ActionResult<ClassSchedule>> CreateClassSchedule(ClassSchedule newClassSchedule)
         {
             // TODO: take an array and add multiple schedules
             
@@ -40,6 +40,26 @@ namespace GymManagement.Api.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetClassSchedules), new { id = newClassSchedule.ClassScheduleId }, newClassSchedule);
+        }
+
+        [HttpPatch]
+        public async Task<ActionResult<ClassSchedule>> UpdateClassSchedules([FromBody]ClassSchedule[] classSchedules)
+        {
+            try
+            {
+                foreach (var schedule in classSchedules)
+                {
+                    schedule.Modified = DateTime.Now;
+                    _context.ClassSechedules.Update(schedule);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(classSchedules);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
