@@ -22,7 +22,7 @@ namespace GymManagement.Api.Controllers
         [HttpGet]
         public IActionResult GetClassSchedules()
         {
-            var classSchedules = _context.ClassSechedules.ToList();
+            var classSchedules = _context.ClassSechedules.Where(s => s.IsDeleted == false).ToList();
             return Ok(classSchedules);
         }
 
@@ -40,6 +40,23 @@ namespace GymManagement.Api.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetClassSchedules), new { id = newClassSchedule.ClassScheduleId }, newClassSchedule);
+        }
+
+        // api/ClassSchedule/Id
+        [HttpPost("{id}")]
+        public async Task<ActionResult<ClassSchedule>> DeleteClassSchedule(int id)
+        {
+            var classSchedule = _context.ClassSechedules.Where(s => s.ClassScheduleId == id).FirstOrDefault();
+            if (classSchedule != null)
+            {
+                classSchedule.IsDeleted = true;
+                classSchedule.Modified = DateTime.Now;
+                await _context.SaveChangesAsync();
+                return Ok(true);
+            }
+            else
+                return NotFound();
+
         }
 
         [HttpPatch]
