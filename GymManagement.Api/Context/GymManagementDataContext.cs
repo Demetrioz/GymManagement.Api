@@ -15,7 +15,7 @@ namespace GymManagement.Api.Context
         public GymManagementDataContext(DbContextOptions<GymManagementDataContext> options) : base(options) { }
 
         public DbSet<Class> Classes { get; set; }
-        public DbSet<ClassSchedule> ClassSechedules { get; set; }
+        public DbSet<ClassSchedule> ClassSchedules { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<GymManagementLog> GymManagementLogs { get; set; }
         public DbSet<Interest> Interests { get; set; }

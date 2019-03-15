@@ -332,4 +332,4 @@ GymManagement.Api/appsettings.Dev.json
 GymManagement.Api/appsettings.json
 GymManagement.Api/appsettings.Test.json
 GymManagement.Api/appsettings.Prod.json
-GymManagement.Migrations/
+GymManagement.Migrations/Sprint_001/Sprint_001.sql

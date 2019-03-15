@@ -22,7 +22,7 @@ namespace GymManagement.Api.Controllers
         [HttpGet]
         public IActionResult GetClassSchedules()
         {
-            var classSchedules = _context.ClassSechedules.Where(s => s.IsDeleted == false).ToList();
+            var classSchedules = _context.ClassSchedules.Where(s => s.IsDeleted == false).ToList();
             return Ok(classSchedules);
         }
 
@@ -36,7 +36,7 @@ namespace GymManagement.Api.Controllers
             newClassSchedule.Created = DateTime.Now;
             newClassSchedule.IsDeleted = false;
 
-            _context.ClassSechedules.Add(newClassSchedule);
+            _context.ClassSchedules.Add(newClassSchedule);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetClassSchedules), new { id = newClassSchedule.ClassScheduleId }, newClassSchedule);
@@ -46,7 +46,7 @@ namespace GymManagement.Api.Controllers
         [HttpPost("{id}")]
         public async Task<ActionResult<ClassSchedule>> DeleteClassSchedule(int id)
         {
-            var classSchedule = _context.ClassSechedules.Where(s => s.ClassScheduleId == id).FirstOrDefault();
+            var classSchedule = _context.ClassSchedules.Where(s => s.ClassScheduleId == id).FirstOrDefault();
             if (classSchedule != null)
             {
                 classSchedule.IsDeleted = true;
@@ -67,7 +67,7 @@ namespace GymManagement.Api.Controllers
                 foreach (var schedule in classSchedules)
                 {
                     schedule.Modified = DateTime.Now;
-                    _context.ClassSechedules.Update(schedule);
+                    _context.ClassSchedules.Update(schedule);
                 }
                 await _context.SaveChangesAsync();
 

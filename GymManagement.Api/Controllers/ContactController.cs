@@ -47,5 +47,35 @@ namespace GymManagement.Api.Controllers
 
             return CreatedAtAction(nameof(GetContacts), new { }, contacts);
         }
+
+        [HttpPatch]
+        public async Task<ActionResult<Contact>> UpdateContacts([FromBody]Contact[] contacts)
+        {
+            try
+            {
+                var prospect = _context.Statuses.Where(s => s.Name == "prospect").FirstOrDefault();
+
+                foreach (var contact in contacts)
+                {
+                    if (contact.StatusId != prospect.StatusId)
+                    {
+                        contact.Converted = true;
+                        contact.DateConverted = DateTime.Now;
+                    }
+                    else
+                        contact.Converted = false;
+
+                    contact.Modified = DateTime.Now;
+                    _context.Contacts.Update(contact);
+                }
+                await _context.SaveChangesAsync();
+
+                return Ok(contacts);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
