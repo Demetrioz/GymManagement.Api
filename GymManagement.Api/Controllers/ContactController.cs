@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
@@ -23,6 +24,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetContacts()
         {
             var contacts = _context.Contacts.Include("Status").ToList();
@@ -30,6 +32,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateContact(Contact[] contacts)
         {
             foreach(var contact in contacts)
@@ -49,6 +52,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<ActionResult<Contact>> UpdateContacts([FromBody]Contact[] contacts)
         {
             try

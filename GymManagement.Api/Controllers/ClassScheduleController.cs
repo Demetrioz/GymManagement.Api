@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
@@ -20,6 +21,7 @@ namespace GymManagement.Api.Controllers
         // Get: /api/Class
         // TODO: Add filter
         [HttpGet]
+        [Authorize]
         public IActionResult GetClassSchedules()
         {
             var classSchedules = _context.ClassSchedules.Where(s => s.IsDeleted == false).ToList();
@@ -28,6 +30,7 @@ namespace GymManagement.Api.Controllers
 
         // Post: /api/Class
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<ClassSchedule>> CreateClassSchedule(ClassSchedule newClassSchedule)
         {
             // TODO: take an array and add multiple schedules
@@ -44,6 +47,7 @@ namespace GymManagement.Api.Controllers
 
         // api/ClassSchedule/Id
         [HttpPost("{id}")]
+        [Authorize]
         public async Task<ActionResult<ClassSchedule>> DeleteClassSchedule(int id)
         {
             var classSchedule = _context.ClassSchedules.Where(s => s.ClassScheduleId == id).FirstOrDefault();
@@ -60,6 +64,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<ActionResult<ClassSchedule>> UpdateClassSchedules([FromBody]ClassSchedule[] classSchedules)
         {
             try

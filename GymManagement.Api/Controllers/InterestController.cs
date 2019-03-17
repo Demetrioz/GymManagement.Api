@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
@@ -23,6 +24,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetInterests()
         {
             var interests = _context.Interests.ToList();

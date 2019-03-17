@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
@@ -20,6 +21,7 @@ namespace GymManagement.Api.Controllers
         // Get: /api/Class
         // TODO: Add filter
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Class>>> GetClasses(string filter = null)
         {
             return await _context.Classes.ToListAsync();
@@ -27,6 +29,7 @@ namespace GymManagement.Api.Controllers
 
         // Get: /api/Class/{id}
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Class>> GetClass(int classId)
         {
             var item = await _context.Classes.FindAsync(classId);
@@ -35,6 +38,7 @@ namespace GymManagement.Api.Controllers
 
         // Post: /api/Class
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Class>> CreateClass(Class newClass)
         {
             _context.Classes.Add(newClass);

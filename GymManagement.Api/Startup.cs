@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using GymManagement.Api.Context;
 using GymManagement.Api.Config;
 using GymManagement.DataModel;
@@ -40,6 +43,9 @@ namespace GymManagement.Api
             var settings = new ApiSettings();
             Configuration.GetSection("ApiSettings").Bind(settings);
 
+            var security = new SecuritySettings();
+            Configuration.GetSection("SecuritySettings").Bind(security);
+
             if(settings.CORS != null)
             {
                 services.AddCors(options =>
@@ -57,8 +63,25 @@ namespace GymManagement.Api
 
             // Add config object so it can be injected
             services.Configure<ApiSettings>(Configuration.GetSection("ApiSettings"));
+            services.Configure<SecuritySettings>(Configuration.GetSection("SecuritySettings"));
 
-            //services.AddScoped<IHttpContextAccessor, HttpContextAccessor>();
+            // Add JWT Support
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+
+                        // Add to settings so it changes with environments
+                        ValidIssuer = security.Issuer,
+                        ValidAudience = security.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(security.SecretKey))
+                    };
+                });
 
             services.AddDbContext<GymManagementDataContext>(options => options.UseSqlServer(settings.ConnectionStrings["gym_management"]));
 
@@ -72,6 +95,8 @@ namespace GymManagement.Api
 
             if (env.EnvironmentName != "Prod")
                 app.UseDeveloperExceptionPage();
+
+            app.UseAuthentication();
 
             app.UseCors("CorsPolicy");
             app.UseMvc();

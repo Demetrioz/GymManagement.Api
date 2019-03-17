@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
@@ -20,6 +21,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetSources()
         {
             var sources = _context.Sources.ToList();

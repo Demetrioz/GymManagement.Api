@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
@@ -17,6 +18,7 @@ namespace GymManagement.Api.Controllers
         public TypeController (GymManagementDataContext context) { _context = context; }
 
         [HttpGet]
+        [Authorize]
         public IActionResult GetTypes()
         {
             var types = _context.Types.Where(t => t.IsDeleted == false).ToList();
@@ -25,6 +27,7 @@ namespace GymManagement.Api.Controllers
 
         // Get: /api/Type/{category}
         [HttpGet("{category}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Class>>> GetTypesByCategory(string category)
         {
             var types = await _context.Types.Where(type => type.Category == category).ToListAsync();
@@ -32,6 +35,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult CreateType([FromBody]DataModel.Type[] types)
         {
             foreach(var type in types)
@@ -47,6 +51,7 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpPatch]
+        [Authorize]
         public async Task<ActionResult<DataModel.Type>> UpdateTypes([FromBody]DataModel.Type[] types)
         {
             try

@@ -25,6 +25,9 @@ namespace GymManagement.Api.Context
         public DbSet<Status> Statuses { get; set; }
         public DbSet<DataModel.Type> Types { get; set; }
         public DbSet<User> Users { get; set; }
+        public DbSet<Roles> Roles { get; set; }
+        public DbSet<Claims> Claims { get; set; }
+        public DbSet<UserRoleClaimMap> UserRoleClaimMaps { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
