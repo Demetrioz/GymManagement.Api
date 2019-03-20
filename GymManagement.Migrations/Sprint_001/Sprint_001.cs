@@ -195,7 +195,7 @@ namespace GymManagement.Migrations.Migrations.Sprint001
                 .Row(new {RoleId = 4, ClaimId = 3 })
                 .Row(new {RoleId = 4, ClaimId = 5 })
                 .Row(new {RoleId = 4, ClaimId = 8 })
-                .Row(new {RoleId = 4, ClaimId = 12 });
+                .Row(new {RoleId = 4, ClaimId = 11 });
 
             // Create Initial Interests
 

@@ -36,55 +36,86 @@ namespace GymManagement.Api.Controllers
 
         // api/Auth/Token
         [HttpPost("Token")]
-        public IActionResult Login([FromBody]Login user)
+        public IActionResult Login([FromBody]Login credentials)
         {
-            if (user == null)
+            if (credentials == null)
                 return BadRequest("Invalid Request");
 
             try
             {
-                using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
-                {
-                    //decryptedUserName = 
-                    //decryptedPassword =
+                // TODO: Add encryption
+                // TODO: Token shows invalid signature
 
-                    return Ok(true);
+                // See if the user exists
+                var user = _context.Users
+                    .Where(u => (u.Username == credentials.UserName || u.Email == credentials.UserName)
+                        && u.IsDeleted == false)
+                    .FirstOrDefault();
+
+                // Return bad request if user doesn't exist, or password is expired
+                if (user == null)
+                    return BadRequest("User not found");
+
+                else if (user.PasswordExpiration < DateTime.Now)
+                    return BadRequest("Password Expired");
+
+                else if (user.Password != credentials.Password)
+                    return BadRequest("Username or Password is incorrect");
+
+                else
+                {
+                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+                    var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+
+                    var role = _context.Roles
+                        .Where(r => r.RoleId == user.RoleId)
+                        .FirstOrDefault();
+
+                    // Add specific claims
+                    var claims = new List<Claim>
+                    {
+                        new Claim("User", $"{user.FirstName} {user.LastName}"),
+                        new Claim("Role", role.Name)
+                    };
+
+                    var userClaimMaps = _context.UserRoleClaimMaps
+                        .Where(map => map.RoleId == user.RoleId)
+                        .ToList();
+
+                    foreach (var claim in userClaimMaps)
+                    {
+                        var currentClaim = _context.Claims
+                            .Where(c => c.ClaimId == claim.ClaimId)
+                            .FirstOrDefault();
+
+                        claims.Add(new Claim("Claim", currentClaim.Name));
+                    }
+
+                    // Create the token options
+                    var tokenOptions = new JwtSecurityToken(
+                        issuer: _settings.Issuer,
+                        audience: _settings.Audience,
+                        claims: claims,
+                        expires: DateTime.Now.AddMinutes(30),
+                        signingCredentials: signingCredentials
+                    );
+
+                    var handler = new JwtSecurityTokenHandler();
+                    var tokenString = handler.WriteToken(tokenOptions);
+
+                    //Set last logon for user
+                    user.LastLogon = DateTime.Now;
+                    user.Modified = DateTime.Now;
+                    _context.SaveChanges();
+
+                    return Ok(new { Token = tokenString });
                 }
+
             }
             catch(Exception ex)
             {
                 return BadRequest(ex.Message);
             }
-
-
-            //    if (user.Password == dbUser.Password)
-            //    {
-            //        var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
-            //        var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
-
-            //        var claims = new List<Claim>
-            //        {
-            //            new Claim("Name", user.UserName),
-            //            new Claim("Role", "Manager")
-            //        };
-
-            //        var tokenOptions = new JwtSecurityToken(
-            //            issuer: _settings.Issuer,
-            //            audience: _settings.Audience,
-            //            claims: claims, // List of roles (ie student, instructor, owner, admin)
-            //            expires: DateTime.Now.AddMinutes(5),
-            //            signingCredentials: signinCredentials
-            //        );
-
-            //        var handler = new JwtSecurityTokenHandler();
-            //        var tokenString = handler.WriteToken(tokenOptions);
-            //        return Ok(new { Token = tokenString });
-            //    }
-            //    else
-            //        return Unauthorized();
-            //}
-            //else
-            //    return BadRequest("User not found");
         }
     }
 }

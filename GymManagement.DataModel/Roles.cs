@@ -11,6 +11,6 @@ namespace GymManagement.DataModel
         public int RoleId { get; set; }
         public string Name { get; set; }
         public string Label { get; set; }
-        public string Descritpion { get; set; }
+        public string Description { get; set; }
     }
 }
