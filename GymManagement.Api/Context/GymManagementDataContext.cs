@@ -16,6 +16,7 @@ namespace GymManagement.Api.Context
 
         public DbSet<Class> Classes { get; set; }
         public DbSet<ClassSchedule> ClassSchedules { get; set; }
+        public DbSet<ClassAttendance> ClassAttendance { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<GymManagementLog> GymManagementLogs { get; set; }
         public DbSet<Interest> Interests { get; set; }

@@ -107,11 +107,16 @@ namespace GymManagement.Migrations.Migrations.Sprint001
                 .WithColumn("LocationId").AsInt32().Nullable()
                 .WithColumn("Start").AsDateTime().Nullable()
                 .WithColumn("Stop").AsDateTime().Nullable()
-                .WithColumn("Attendance").AsString(int.MaxValue).Nullable()
                 .WithColumn("MaxAttendance").AsInt32().Nullable()
                 .WithColumn("Created").AsDateTime().Nullable()
                 .WithColumn("Modified").AsDateTime().Nullable()
                 .WithColumn("IsDeleted").AsBoolean().Nullable();
+
+            Create.Table("ClassAttendance")
+                .WithColumn("ClassAttendanceId").AsInt32().PrimaryKey().Identity()
+                .WithColumn("ClassId").AsInt32().Nullable()
+                .WithColumn("ContactId").AsInt32().Nullable()
+                .WithColumn("Present").AsBoolean().Nullable();
 
             Create.Table("ClassSchedule")
                 .WithColumn("ClassScheduleId").AsInt32().PrimaryKey().Identity()
