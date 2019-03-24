@@ -30,5 +30,37 @@ namespace GymManagement.Api.Controllers
             var interests = _context.Interests.ToList();
             return Ok(interests);
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult CreateInterest([FromBody]Interest[] interests)
+        {
+            foreach (var interest in interests)
+            {
+                // Set default information
+                
+                interest.Created = DateTime.Now;
+                interest.IsDeleted = false;
+
+                _context.Interests.Add(interest);
+            }
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetInterests), new { }, interests);
+        }
+
+        [HttpPatch]
+        [Authorize]
+        public IActionResult UpdateInterest([FromBody]Interest[] interests)
+        {
+            foreach(var interest in interests)
+            {
+                interest.Modified = DateTime.Now;
+                _context.Interests.Update(interest);
+            }
+            _context.SaveChanges();
+
+            return Ok(interests);
+        }
     }
 }
