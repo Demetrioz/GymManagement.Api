@@ -209,8 +209,22 @@ namespace GymManagement.Migrations.Migrations.Sprint001
             // Create Initial Sources
 
             // Create Initial Statuses
+            Insert.IntoTable("Status")
+                .Row(new { Type = "contact", Name = "prospect", Label = "Prospect", Description = "Individual that has made contact and has interest in joining", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Type = "contact", Name = "member", Label = "Member", Description = "Individual who is currently signed up as a member", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Type = "contact", Name = "alumni", Label = "Alumni", Description = "Individual who was previously a member", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Type = "contact", Name = "not_interested", Label = "Not Interested", Description = "Individual who is no longer interested in the gym", Created = DateTime.Now, IsDeleted = false });
 
             // Create Initial Types
+            Insert.IntoTable("Type")
+                .Row(new { Category = "location", Name = "building", Label = "Building", Description = "A physical building", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "location", Name = "room", Label = "Room", Description = "A room inside a building", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "internet", Label = "Internet", Description = "Source was a website on the internet", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "event", Label = "Event", Description = "Source was from an event where we had a booth", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "individual", Label = "Individual", Description = "Source was from an individual who knew us", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "digital", Label = "Digital", Description = "Source was from a digital source besides the internet", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "print", Label = "Print", Description = "Source was from a printed medium", Created = DateTime.Now, IsDeleted = false })
+                .Row(new { Category = "source", Name = "unknown", Label = "Unknown", Description = "Source was from a location not currently tracked or known about", Created = DateTime.Now, IsDeleted = false });
 
             // Create Initial Class Schedule
 
