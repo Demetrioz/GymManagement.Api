@@ -27,5 +27,36 @@ namespace GymManagement.Api.Controllers
             var sources = _context.Sources.ToList();
             return Ok(sources);
         }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult CreateSources([FromBody]Source[] sources)
+        {
+            foreach(var source in sources)
+            {
+                // Set default information
+                source.Created = DateTime.Now;
+                source.IsDeleted = false;
+
+                _context.Sources.Add(source);
+            }
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(GetSources), new { }, sources);
+        }
+
+        [HttpPatch]
+        [Authorize]
+        public IActionResult UpdateSources([FromBody]Source[] sources)
+        {
+            foreach(var source in sources)
+            {
+                source.Modified = DateTime.Now;
+                _context.Sources.Update(source);
+            }
+            _context.SaveChanges();
+
+            return Ok(sources);
+        }
     }
 }
