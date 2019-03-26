@@ -10,6 +10,7 @@ namespace GymManagement.Api.Config
         public string[] CORS { get; set; }
         public bool LogRequests { get; set; }
         public bool LogResponses { get; set; }
+        public Dictionary<string, string> ApiKeys { get; set; }
         public Dictionary<string, string> ConnectionStrings { get; set; }
     }
 }

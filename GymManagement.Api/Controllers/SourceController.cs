@@ -24,7 +24,7 @@ namespace GymManagement.Api.Controllers
         [Authorize]
         public IActionResult GetSources()
         {
-            var sources = _context.Sources.ToList();
+            var sources = _context.Sources.Include("Type").ToList();
             return Ok(sources);
         }
 

@@ -10,6 +10,8 @@ namespace GymManagement.DataModel
         [Key]
         public int SourceId { get; set; }
         public int? TypeId { get; set; }
+        [ForeignKey("TypeId")]
+        public Type Type { get; set; }
         public string Name { get; set; }
         public string Label { get; set; }
         public string Description { get; set; }
