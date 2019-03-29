@@ -11,6 +11,7 @@ namespace GymManagement.Api.Config
         public bool LogRequests { get; set; }
         public bool LogResponses { get; set; }
         public Dictionary<string, string> ApiKeys { get; set; }
+        public Dictionary<string, string> ApiUris { get; set; }
         public Dictionary<string, string> ConnectionStrings { get; set; }
     }
 }

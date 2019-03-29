@@ -4,11 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using GymManagement.DataModel;
 using GymManagement.Api.Context;
 using GymManagement.Api.Config;
+using GymManagement.Api.Services;
+using GymManagement.Api.Core;
 
 namespace GymManagement.Api.Controllers
 {
@@ -21,9 +24,12 @@ namespace GymManagement.Api.Controllers
         public MailchimpController(GymManagementDataContext context, IOptions<ApiSettings> settings) { _context = context; _settings = settings.Value; }
 
         [HttpGet("List")]
-        public IActionResult GetLists()
+        [Authorize]
+        public IActionResult GetLists(string filter = null)
         {
-            return Ok();
+            var service = new MailchimpService(_settings);
+            var response = service.Read("/lists", filter);
+            return Ok(response);
         }
 
         [HttpPost("List")]
