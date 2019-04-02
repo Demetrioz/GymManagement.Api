@@ -14,7 +14,9 @@ using GymManagement.DataModel;
 using GymManagement.Api.Context;
 using GymManagement.Api.Config;
 using GymManagement.Api.Controllers.DTO;
+using GymManagement.Api.Core;
 using System.Security.Claims;
+using System.IO;
 
 namespace GymManagement.Api.Controllers
 {
@@ -31,7 +33,26 @@ namespace GymManagement.Api.Controllers
         [HttpPost("Key")]
         public IActionResult GetPublicKey()
         {
-            return Ok(new { _settings.PublicKey });
+            var publicKey = _settings.PublicKey;
+
+            try
+            {
+                RSACryptoServiceProvider publicProvider = new RSACryptoServiceProvider();
+                RSAUtility.FromXmlString(publicProvider, publicKey);
+                var publicPemKey = new StringWriter();
+                RSAUtility.ExportPublicKey(publicProvider, publicPemKey);
+
+                var key = new
+                {
+                    Key = publicPemKey.ToString()
+                };
+
+                return Ok(key);
+            }
+            catch(Exception ex)
+            {
+                return Ok("There was an error Creating a public key");
+            }
         }
 
         // api/Auth/Token
@@ -43,28 +64,52 @@ namespace GymManagement.Api.Controllers
 
             try
             {
-                // TODO: Add encryption
-                // TODO: Token shows invalid signature
+                var privateKey = _settings.PrivateKey;
+
+                var encryptedUser = Convert.FromBase64String(credentials.UserName);
+                var encryptedPass = Convert.FromBase64String(credentials.Password);
+
+                RSACryptoServiceProvider privateProvider = new RSACryptoServiceProvider();
+                RSAUtility.FromXmlString(privateProvider, privateKey);
+
+                var decryptedUser = privateProvider.Decrypt(encryptedUser, false);
+                var decryptedPass = privateProvider.Decrypt(encryptedPass, false);
+
+                var plaintextUser = Encoding.ASCII.GetString(decryptedUser);
+                var plaintextPass = Encoding.ASCII.GetString(decryptedPass);
 
                 // See if the user exists
                 var user = _context.Users
-                    .Where(u => (u.Username == credentials.UserName || u.Email == credentials.UserName)
+                    .Where(u => (u.Username == plaintextUser || u.Email == plaintextUser)
                         && u.IsDeleted == false)
                     .FirstOrDefault();
 
+                // Decrypt the database password
+                var dbPassBytes = user != null
+                    ? Convert.FromBase64String(user.Password)
+                    : null;
+
+                var decryptedDbPass = dbPassBytes != null
+                    ? privateProvider.Decrypt(dbPassBytes, false)
+                    : null;
+
+                var plainTextDbPass = decryptedDbPass != null
+                    ? Encoding.ASCII.GetString(decryptedDbPass)
+                    : null;
+
                 // Return bad request if user doesn't exist, or password is expired
                 if (user == null)
-                    return BadRequest("User not found");
+                    return Ok(new { Message = "User not found" });
 
                 else if (user.PasswordExpiration < DateTime.Now)
-                    return BadRequest("Password Expired");
+                    return Ok(new { Message = "Password Expired" });
 
-                else if (user.Password != credentials.Password)
-                    return BadRequest("Username or Password is incorrect");
+                else if (plainTextDbPass != plaintextPass)
+                    return Ok(new { Message = "Username or Password is incorrect" });
 
                 else
                 {
-                    var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.SecretKey));
+                    var secretKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_settings.SecretKey));
                     var signingCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
 
                     var role = _context.Roles
@@ -114,7 +159,7 @@ namespace GymManagement.Api.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(ex.Message);
+                return Ok(ex.Message);
             }
         }
     }
