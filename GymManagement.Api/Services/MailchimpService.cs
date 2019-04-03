@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using RestSharp;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using GymManagement.Api.Config;
 using GymManagement.Api.Core;
 
@@ -54,7 +55,7 @@ namespace GymManagement.Api.Services
             }
         }
 
-        public ObjectResult Create()
+        public IActionResult Create(string endpoint, object postObject)
         {
             return new ObjectResult(true);
         }

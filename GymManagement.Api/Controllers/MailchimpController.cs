@@ -14,6 +14,7 @@ using GymManagement.Api.Config;
 using GymManagement.Api.Services;
 using GymManagement.Api.Core;
 using GymManagement.Api.Controllers.DTO.Mailchimp;
+using GymManagement.Api.Controllers.DTO.Requests;
 
 namespace GymManagement.Api.Controllers
 {
@@ -46,10 +47,25 @@ namespace GymManagement.Api.Controllers
             return Ok();
         }
 
-        [HttpPost("List/{listId}/members")]
-        public IActionResult AddListMembers()
+        [HttpPost("List/{listId}/Members")]
+        public IActionResult AddListMembers([FromBody]MailchimpListMember member, string listId)
         {
-            return Ok();
+            var service = new MailchimpService(_settings);
+
+            // TODO: Get the interests of the list provided (needed for member object id)
+
+            var memberObject = new
+            {
+                email_address = member.Email,
+                status = "subscribed",
+                interests = new { key = "TODO - Interest Id" },
+                timestamp_signup = DateTime.Now.ToString(),
+                tags = member.Tags.ToArray(),
+            };
+
+            var response = service.Create($"/lists/{listId}/members", memberObject);
+
+            return Ok(response);
         }
 
         [HttpGet("List/{listId}/Groups")]
@@ -93,6 +109,15 @@ namespace GymManagement.Api.Controllers
             };
 
             return Ok(group);
+        }
+
+        [HttpGet("List/{listId}/Segments")]
+        [Authorize]
+        public IActionResult GetSegments(string listId, string filter = null)
+        {
+            var service = new MailchimpService(_settings);
+            var response = service.Read($"/lists/{listId}/segments", filter);
+            return Ok(response);
         }
     }
 }
