@@ -57,7 +57,35 @@ namespace GymManagement.Api.Services
 
         public IActionResult Create(string endpoint, object postObject)
         {
-            return new ObjectResult(true);
+
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+                var client = new RestClient(ApiSettings.ApiUris["MailChimp"]);
+
+                var request = new RestRequest($"{endpoint}", Method.POST);
+                request.AddHeader("Authorization", $"apikey {ApiSettings.ApiKeys["MailChimp"]}");
+                request.AddJsonBody(postObject);
+
+                IRestResponse response = client.Execute(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var responseData = JsonConvert.DeserializeObject(response.Content);
+                    return ApiResponse.Success(responseData);
+                }
+                else
+                {
+                    var message = $"{response.StatusCode}: {response.Content}";
+                    return ApiResponse.Fail(message);
+                }
+            }
+            catch (Exception ex)
+            {
+                var message = $"{ex.Message} {ex.InnerException.Message}";
+                return ApiResponse.Fail(message);
+            }
         }
 
         public ObjectResult Update()

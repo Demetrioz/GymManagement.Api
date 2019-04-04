@@ -9,6 +9,8 @@ namespace GymManagement.Api.Controllers.DTO.Requests
     {
         public string Email { get; set; }
         public string Interest { get; set; }
-        public List<string> Tags { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string[] Tags { get; set; }
     }
 }
