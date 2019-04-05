@@ -36,6 +36,7 @@
 
   <ItemGroup>
     <Folder Include="Controllers\DTO\Responses\" />
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

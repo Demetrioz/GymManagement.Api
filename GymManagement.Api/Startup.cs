@@ -100,7 +100,7 @@ namespace GymManagement.Api
 
             app.UseCors("CorsPolicy");
             app.UseMvc();
-
+            app.UseStaticFiles();
             //app.UseHttpsRedirection();
         }
     }
