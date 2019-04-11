@@ -43,12 +43,15 @@ namespace GymManagement.Api.Controllers
         }
 
         [HttpGet("List/{listId}/members")]
-        public IActionResult GetListMembers()
+        public IActionResult GetListMembers(string listId, string filter = null)
         {
-            return Ok();
+            var service = new MailchimpService(_settings);
+            var response = service.Read($"/lists/{listId}/members", filter);
+            return Ok(response);
         }
 
         [HttpPost("List/{listId}/Members")]
+        [Authorize]
         public IActionResult AddListMembers([FromBody]MailchimpListMember member, string listId)
         {
             var service = new MailchimpService(_settings);
